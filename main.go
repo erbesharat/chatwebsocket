@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
@@ -72,6 +73,12 @@ type Hub struct {
 
 	// Unregister requests from clients.
 	unregister chan *Agent
+}
+
+type Request struct {
+	UserID   int    `json: user_id`
+	DoctorID int    `json: doctor_id`
+	Action   string `json: action`
 }
 
 func main() {
@@ -165,7 +172,7 @@ func (c *Agent) writePump() {
 	}()
 	for {
 		select {
-		case _, ok := <-c.send:
+		case message, ok := <-c.send:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
@@ -177,7 +184,12 @@ func (c *Agent) writePump() {
 			if err != nil {
 				return
 			}
-			w.Write([]byte("message"))
+
+			// Unmarshal the message json
+			myr := &Request{}
+			json.Unmarshal(message, myr)
+
+			w.Write([]byte("still testing"))
 
 			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
