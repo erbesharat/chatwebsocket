@@ -4,11 +4,11 @@ const io = require("socket.io")(http);
 const sql = require("mssql");
 const uuid = require("uuid");
 
-app.get("/", function(req, res){
+app.get("/", function (req, res) {
   res.sendFile(__dirname + "/static/pages/index.html");
 });
 
-io.on("connection", function(socket){
+io.on("connection", function (socket) {
 
   //
   // ─── SOCKET EVENTS ──────────────────────────
@@ -21,18 +21,13 @@ io.on("connection", function(socket){
   //    "recipient_id": int,
   //  }
   // ***********************************
-  socket.on("check", async function(data){
+  socket.on("check", async function (data) {
     // TODO: Connect database and search for user
     // TODO: Connect database and search for recipient
     roomID = uuid.v4();
-    try {
-      const result = await sql.query`select * from rooms where id=${roomID}`
-    } catch (err) {
-      
-    }
   });
 
-  socket.on("chat message", async function(msg){
+  socket.on("chat message", async function (msg) {
     try {
       const result = await sql.query`select * from users`
       io.emit("chat response", result)
@@ -42,6 +37,6 @@ io.on("connection", function(socket){
   });
 });
 
-http.listen(3000, function(){
+http.listen(3000, function () {
   console.log("listening on *:3000");
 });
