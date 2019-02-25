@@ -47,6 +47,43 @@ function handleWebsocket(socket) {
       socket.emit('request response', 'joined to ' + result.recordset[0].title);
     }
   });
+
+  // ********** Request Model **********
+  //  {
+  //    "user_id": int,
+  //    "room_title": string,
+  //    "message": string
+  //  }
+  // ***********************************
+  socket.on('send', async function(data) {
+    const result = await sql.query(
+      boilMSSQL(
+        `SELECT * FROM %db.[dbo].[rooms] WHERE title = '${data.room_title}';`,
+      ),
+    );
+    if (result.rowsAffected < 1) {
+      socket.emit(
+        'send response',
+        `[error]: room ${data.room_title} doesn't exist`,
+      );
+    } else {
+      if (
+        result.recordset[0].user_id != data.user_id ||
+        result.recordset[0].recipient_id != data.user_id
+      ) {
+        console.socket.emit(
+          'send response',
+          `[error]: user doesn't belong to room ${data.room_title}`,
+        );
+      } else {
+        // TODO: Save the message to DB
+        io.sockets
+          .in(data.room_title)
+          .emit('receive', { user_id: data.user_id, message: data.message });
+        console.log('hola hola hola hola hola');
+      }
+    }
+  });
 }
 
 async function startServer() {
