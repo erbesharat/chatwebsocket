@@ -12,9 +12,13 @@ test('It should test check listener', async t => {
   await new Promise((resolve, reject) => {
     socket.on('request response', function(msg) {
       console.log(msg);
-      resolve();
+      if (msg.includes('joined to')) {
+        resolve();
+        t.pass();
+      } else {
+        reject();
+        t.fail("couldn't join to any rooms");
+      }
     });
   });
-
-  t.pass();
 });
