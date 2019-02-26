@@ -1,6 +1,8 @@
+import { Message } from './types/message';
+
 const app = require('express')();
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const socketIO = require('socket.io')(http);
 const sql = require('mssql');
 const uuid = require('uuid');
 
@@ -48,14 +50,7 @@ function handleWebsocket(socket) {
     }
   });
 
-  // ********** Request Model **********
-  //  {
-  //    "user_id": int,
-  //    "room_title": string,
-  //    "message": string
-  //  }
-  // ***********************************
-  socket.on('send', async function(data) {
+  socket.on('send', async (data: Message) => {
     const result = await sql.query(
       boilMSSQL(
         `SELECT * FROM %db.[dbo].[rooms] WHERE title = '${data.room_title}';`,
@@ -71,13 +66,13 @@ function handleWebsocket(socket) {
         result.recordset[0].user_id != data.user_id ||
         result.recordset[0].recipient_id != data.user_id
       ) {
-        console.socket.emit(
+        socket.emit(
           'send response',
           `[error]: user doesn't belong to room ${data.room_title}`,
         );
       } else {
         // TODO: Save the message to DB
-        io.sockets
+        socketIO.sockets
           .in(data.room_title)
           .emit('receive', { user_id: data.user_id, message: data.message });
         console.log('hola hola hola hola hola');
@@ -90,7 +85,7 @@ async function startServer() {
   await sql.connect(
     'mssql://Erfan:34uxwp7Mco7@185.211.57.185/WellinnoApiDBTestWebsocket',
   );
-  io.on('connection', handleWebsocket);
+  socketIO.on('connection', handleWebsocket);
   http.listen(4000, function() {
     console.log('listening on *:4000');
   });
