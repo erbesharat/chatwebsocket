@@ -3,3 +3,8 @@ export interface Message {
   room_title: string;
   message: string;
 }
+
+export interface RequestJoin {
+  user_id: number;
+  recipient_id: number;
+}

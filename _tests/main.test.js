@@ -1,7 +1,7 @@
 import test from 'ava';
 const io = require('socket.io-client');
 
-test('It should test check listener', async t => {
+test('It should test request listener', async t => {
   const request = {
     user_id: 1,
     recipient_id: 1,
@@ -11,7 +11,6 @@ test('It should test check listener', async t => {
   socket.emit('request', request);
   await new Promise((resolve, reject) => {
     socket.on('request response', function(msg) {
-      console.log(msg);
       if (msg.includes('joined to')) {
         resolve();
         t.pass();
@@ -33,12 +32,22 @@ test('It should send a message to a room', async t => {
 
   const socket = io.connect('http://localhost:4000');
   socket.emit('request', request);
-  socket.emit('send', request);
   await new Promise((resolve, reject) => {
-    socket.on('receive', function(data) {
-      t.log(data);
+    socket.on('request response', function(msg) {
+      if (msg.includes('joined to')) {
+        resolve();
+      } else {
+        reject();
+        t.fail("couldn't join to any rooms");
+      }
+    });
+  });
+
+  socket.emit('send', request);
+  await new Promise(resolve => {
+    socket.on('send message to room', function(data) {
+      t.pass();
       resolve();
-      t.fail(data);
     });
   });
 });
