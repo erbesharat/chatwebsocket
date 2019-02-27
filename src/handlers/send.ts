@@ -16,7 +16,9 @@ export default (socket: Socket) => async (data: Message) => {
     return false;
   }
 
-  const { user_id, recipient_id } = result.recordset[0];
+  console.log('\n\nResult:\n', result);
+
+  const { id, user_id, recipient_id } = result.recordset[0];
   if (user_id !== data.user_id || recipient_id !== data.user_id) {
     socket.emit(
       'send response',
@@ -25,6 +27,19 @@ export default (socket: Socket) => async (data: Message) => {
     return false;
   }
 
-  // TODO: Save the message to DB
+  try {
+    await sql.query(
+      boilMSSQL(
+        `INSERT INTO %db.[chat_messages] (author_id, room_id, text, created_at)
+         VALUES ('${data.user_id}', ${id}, '${
+          data.message
+        }', '${new Date().toISOString()}')
+        `,
+      ),
+    );
+  } catch (error) {
+    console.error("\nCouldn't insert the message to database: ", error);
+  }
+
   socketServer.sockets.in(data.room_title).emit('receive', data);
 };
