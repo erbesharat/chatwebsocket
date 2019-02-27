@@ -8,3 +8,8 @@ export interface RequestJoin {
   user_id: number;
   recipient_id: number;
 }
+
+export interface JoinMessage {
+  success: boolean;
+  room_title: string;
+}

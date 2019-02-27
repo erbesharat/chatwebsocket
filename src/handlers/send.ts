@@ -26,6 +26,5 @@ export default (socket: Socket) => async (data: Message) => {
   }
 
   // TODO: Save the message to DB
-  socketServer.sockets.in(data.room_title).emit('send message to room', data);
-  console.log('hola hola hola hola hola');
+  socketServer.sockets.in(data.room_title).emit('receive', data);
 };

@@ -7,7 +7,18 @@ app.get('/', function(req, res) {
 
 function handleWebsocket(socket) {
   Object.keys(socketHandlers).forEach(event =>
-    socket.on(event, socketHandlers[event](socket)),
+    socket.on(event, msg => {
+      console.log(
+        '\x1b[0m\x1b[47m\x1b[30mRECEIVED\x1b[0m\t',
+        Date.now(),
+        '\n\x1b[0m\x1b[47m\x1b[30mTYPE\x1b[0m\t\t',
+        event,
+        '\n\x1b[0m\x1b[47m\x1b[30mMESSAGE\x1b[0m\n',
+        msg,
+        '\n',
+      );
+      return socketHandlers[event](socket)(msg);
+    }),
   );
 }
 

@@ -4,6 +4,7 @@ import { Socket } from 'socket.io';
 import uuid from 'uuid';
 import { boilMSSQL } from '../utils/mssql';
 import { sql } from '../server';
+import { JoinMessage } from '../types';
 
 export default (socket: Socket) => async (data: RequestJoin) => {
   const result = await sql.query(
@@ -26,10 +27,16 @@ export default (socket: Socket) => async (data: RequestJoin) => {
     );
 
     socket.join(roomID);
-    socket.emit('request response', 'joined to ' + roomID);
+    socket.emit('request response', {
+      success: true,
+      room_title: roomID,
+    } as JoinMessage);
   } else {
     // Join room
     socket.join(result.recordset[0].title);
-    socket.emit('request response', 'joined to ' + result.recordset[0].title);
+    socket.emit('request response', {
+      success: true,
+      room_title: result.recordset[0].title,
+    } as JoinMessage);
   }
 };
