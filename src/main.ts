@@ -28,8 +28,8 @@ async function startServer() {
       'mssql://Erfan:34uxwp7Mco7@185.211.57.185/WellinnoApiDBTestWebsocket',
     );
     socketServer.on('connection', handleWebsocket);
-    server.listen(4000, function() {
-      console.log('listening on *:4000');
+    server.listen(process.env.PORT, function() {
+      console.log(`listening on *:${process.env.PORT}`);
     });
   } catch (err) {
     console.error(err);
