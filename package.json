@@ -6,8 +6,24 @@
   "scripts": {
     "start": "node dist/main.js",
     "test": "ava",
+    "test:watch": "ava --watch",
     "compile": "tsc --build ./tsconfig.json",
-    "compile-watch": "tsc --build ./tsconfig.json --watch"
+    "compile:watch": "tsc --build ./tsconfig.json --watch"
+  },
+  "ava": {
+    "compileEnhancements": false,
+    "cache": false,
+    "concurrency": 5,
+    "verbose": true,
+    "files": [
+      "_tests/**/*.ts"
+    ],
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
   },
   "repository": {
     "type": "git",

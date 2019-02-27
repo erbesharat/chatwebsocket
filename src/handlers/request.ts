@@ -1,0 +1,35 @@
+import { RequestJoin } from '../types';
+import { Socket } from 'socket.io';
+
+import uuid from 'uuid';
+import { boilMSSQL } from '../utils/mssql';
+import { sql } from '../server';
+
+export default (socket: Socket) => async (data: RequestJoin) => {
+  const result = await sql.query(
+    boilMSSQL(
+      `SELECT * FROM %db.[rooms] WHERE user_id = ${
+        data.user_id
+      } AND recipient_id = ${data.recipient_id};`,
+    ),
+  );
+
+  if (result.rowsAffected[0] === 0) {
+    // Create room
+    const roomID = uuid.v4();
+    await sql.query(
+      boilMSSQL(
+        `INSERT INTO %db.[rooms] (title, user_id, recipient_id)
+        VALUES ('${roomID}', ${data.user_id}, ${data.recipient_id})
+        `,
+      ),
+    );
+
+    socket.join(roomID);
+    socket.emit('request response', 'joined to ' + roomID);
+  } else {
+    // Join room
+    socket.join(result.recordset[0].title);
+    socket.emit('request response', 'joined to ' + result.recordset[0].title);
+  }
+};
