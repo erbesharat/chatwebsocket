@@ -23,7 +23,7 @@ const receiveHandler = (t, socket) =>
   });
 
 test('It should join room', async t => {
-  const socket = socketIO.connect('http://localhost:4000');
+  const socket = socketIO.connect('https://wellinnochat.herokuapp.com');
   const request: RequestJoin = {
     user_id: 1,
     recipient_id: 1,
@@ -37,7 +37,7 @@ test('It should join room', async t => {
 });
 
 test('It should send a message to a new room', async t => {
-  const socket = socketIO.connect('http://localhost:4000');
+  const socket = socketIO.connect('http://wellinnochat.herokuapp.com');
   const request: RequestJoin = {
     user_id: 1,
     recipient_id: 1,
@@ -60,7 +60,7 @@ test('It should send a message to a new room', async t => {
 });
 
 test('It should send a message to the active room', async t => {
-  const socket = socketIO.connect('http://localhost:4000');
+  const socket = socketIO.connect('http://wellinnochat.herokuapp.com');
   const request: RequestJoin = {
     user_id: 1,
     recipient_id: 1,
@@ -82,8 +82,8 @@ test('It should send a message to the active room', async t => {
 });
 
 test('It should receive message in the active room', async t => {
-  const user = socketIO.connect('http://localhost:4000');
-  const recipient = socketIO.connect('http://localhost:4000');
+  const user = socketIO.connect('http://wellinnochat.herokuapp.com');
+  const recipient = socketIO.connect('http://wellinnochat.herokuapp.com');
   const request: RequestJoin = {
     user_id: 1,
     recipient_id: 2,
@@ -111,9 +111,9 @@ test('It should receive message in the active room', async t => {
 });
 
 test('It should not receive message in other rooms', async t => {
-  const user = socketIO.connect('http://localhost:4000');
-  const recipient = socketIO.connect('http://localhost:4000');
-  const notReceiver = socketIO.connect('http://localhost:4000');
+  const user = socketIO.connect('http://wellinnochat.herokuapp.com');
+  const recipient = socketIO.connect('http://wellinnochat.herokuapp.com');
+  const notReceiver = socketIO.connect('http://wellinnochat.herokuapp.com');
   const request: RequestJoin = {
     user_id: 1,
     recipient_id: 1,
