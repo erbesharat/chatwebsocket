@@ -13,3 +13,9 @@ export interface JoinMessage {
   success: boolean;
   room_title: string;
 }
+
+export interface CallRequest {
+  from_user: string;
+  to_user: string;
+  type: string;
+}

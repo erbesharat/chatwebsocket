@@ -6,7 +6,8 @@ app.get('/', function(req, res) {
 });
 
 function handleWebsocket(socket) {
-  Object.keys(socketHandlers).forEach(event =>
+  console.log('Listeners', Object.keys(socketHandlers));
+  Object.keys(socketHandlers).forEach(event => {
     socket.on(event, msg => {
       console.log(
         '\x1b[0m\x1b[47m\x1b[30mRECEIVED\x1b[0m\t',
@@ -18,8 +19,9 @@ function handleWebsocket(socket) {
         '\n',
       );
       return socketHandlers[event](socket)(msg);
-    }),
-  );
+    });
+    console.log('Regsitered', event);
+  });
 }
 
 async function startServer() {
@@ -27,7 +29,10 @@ async function startServer() {
     await sql.connect(
       'mssql://Erfan:34uxwp7Mco7@185.211.57.185/WellinnoApiDBTestWebsocket',
     );
-    socketServer.on('connection', handleWebsocket);
+    socketServer.on('connection', socket => {
+      console.log('connected');
+      handleWebsocket(socket);
+    });
     server.listen(process.env.PORT, function() {
       console.log(`listening on *:${process.env.PORT}`);
     });

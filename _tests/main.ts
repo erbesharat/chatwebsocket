@@ -1,6 +1,6 @@
 import test from 'ava';
 import socketIO from 'socket.io-client';
-import { RequestJoin, Message, JoinMessage } from '../src/types';
+import { RequestJoin, Message, JoinMessage, Call } from '../src/types';
 import delay from '../src/utils/delay';
 
 const handleJoin = (t, socket): Promise<JoinMessage> =>
@@ -22,8 +22,8 @@ const receiveHandler = (t, socket) =>
     });
   });
 
-test('It should join room', async t => {
-  const socket = socketIO.connect('https://wellinnochat.herokuapp.com');
+test.skip('It should join room', async t => {
+  const socket = socketIO.connect('http://localhost:4000');
   const request: RequestJoin = {
     user_id: 1,
     recipient_id: 1,
@@ -36,7 +36,7 @@ test('It should join room', async t => {
   socket.close();
 });
 
-test('It should send a message to a new room', async t => {
+test.skip('It should send a message to a new room', async t => {
   const socket = socketIO.connect('http://wellinnochat.herokuapp.com');
   const request: RequestJoin = {
     user_id: 1,
@@ -59,7 +59,7 @@ test('It should send a message to a new room', async t => {
   socket.close();
 });
 
-test('It should send a message to the active room', async t => {
+test.skip('It should send a message to the active room', async t => {
   const socket = socketIO.connect('http://wellinnochat.herokuapp.com');
   const request: RequestJoin = {
     user_id: 1,
@@ -81,7 +81,7 @@ test('It should send a message to the active room', async t => {
   socket.close();
 });
 
-test('It should receive message in the active room', async t => {
+test.skip('It should receive message in the active room', async t => {
   const user = socketIO.connect('http://wellinnochat.herokuapp.com');
   const recipient = socketIO.connect('http://wellinnochat.herokuapp.com');
   const request: RequestJoin = {
@@ -110,7 +110,7 @@ test('It should receive message in the active room', async t => {
   recipient.close();
 });
 
-test('It should not receive message in other rooms', async t => {
+test.skip('It should not receive message in other rooms', async t => {
   const user = socketIO.connect('http://wellinnochat.herokuapp.com');
   const recipient = socketIO.connect('http://wellinnochat.herokuapp.com');
   const notReceiver = socketIO.connect('http://wellinnochat.herokuapp.com');
@@ -149,4 +149,26 @@ test('It should not receive message in other rooms', async t => {
   user.close();
   recipient.close();
   notReceiver.close();
+});
+
+test.only('It should send a call request', async t => {
+  const socket = socketIO.connect('http://localhost:4000');
+  await delay(2000);
+  const request: Call = {
+    from_user: '09111',
+    to_user: '09111',
+    type: 'video',
+  };
+
+  socket.emit('call', request);
+  await delay(2000);
+
+  socket.on('call response', data => {
+    console.log(data);
+  });
+
+  await delay(6000);
+
+  t.pass();
+  socket.close();
 });
