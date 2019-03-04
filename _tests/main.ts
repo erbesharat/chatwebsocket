@@ -1,6 +1,6 @@
 import test from 'ava';
 import socketIO from 'socket.io-client';
-import { RequestJoin, Message, JoinMessage, Call } from '../src/types';
+import { RequestJoin, Message, JoinMessage, Call, User } from '../src/types';
 import delay from '../src/utils/delay';
 
 const handleJoin = (t, socket): Promise<JoinMessage> =>
@@ -151,7 +151,7 @@ test.skip('It should not receive message in other rooms', async t => {
   notReceiver.close();
 });
 
-test.only('It should send a call request', async t => {
+test.skip('It should send a call request', async t => {
   const socket = socketIO.connect('http://localhost:4000');
   await delay(2000);
   const request: Call = {
@@ -164,6 +164,27 @@ test.only('It should send a call request', async t => {
   await delay(2000);
 
   socket.on('call response', data => {
+    console.log(data);
+  });
+
+  await delay(6000);
+
+  t.pass();
+  socket.close();
+});
+
+test.only('It should set status online', async t => {
+  const socket = socketIO.connect('http://localhost:4000');
+  await delay(2000);
+  const request: User = {
+    user_id: 2,
+    online: false,
+  };
+
+  socket.emit('status', request);
+  await delay(2000);
+
+  socket.on('status response', data => {
     console.log(data);
   });
 
