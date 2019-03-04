@@ -3,6 +3,7 @@ import { Call, CallRequest } from '../types';
 import { socketServer, sql } from '../server';
 import { boilMSSQL } from '../utils/mssql';
 import uuid from 'uuid';
+import callRequest from './callResponse';
 
 export default (socket: Socket) => async (data: Call) => {
   const fromUser = await sql.query(
@@ -29,8 +30,8 @@ export default (socket: Socket) => async (data: Call) => {
   } catch (error) {
     console.error("\nCouldn't insert the message to database: ", error);
   }
-  socket.emit('call response', {
-    room: roomID,
-    to: toUserId,
-  });
+  socket.emit('call request', {
+    room_id: roomID,
+    to_user: toUserId,
+  } as CallRequest);
 };

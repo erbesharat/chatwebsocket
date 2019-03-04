@@ -15,7 +15,11 @@ export interface JoinMessage {
 }
 
 export interface CallRequest {
-  from_user: string;
-  to_user: string;
-  type: string;
+  room_id: string;
+  to_user: number;
+}
+
+export interface CallResponse {
+  room_id: string;
+  accepted: boolean;
 }
