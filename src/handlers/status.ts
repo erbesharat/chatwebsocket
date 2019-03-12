@@ -4,9 +4,18 @@ import { socketServer, sql } from '../server';
 import { boilMSSQL } from '../utils/mssql';
 
 export default (socket: Socket) => async (data: User) => {
-  const user = await sql.query(
-    boilMSSQL(`SELECT * FROM %db.[Users] WHERE id = ${data.user_id};`),
-  );
+  let user;
+  try {
+    user = await sql.query(
+      boilMSSQL(`SELECT * FROM %db.[Users] WHERE id = ${data.user_id};`),
+    );
+  } catch (error) {
+    socket.emit('status response', {
+      error: {
+        message: "Couldn't find the user",
+      },
+    });
+  }
   if (data.online) {
     try {
       const result = await sql.query(
