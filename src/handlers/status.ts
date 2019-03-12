@@ -5,6 +5,7 @@ import { boilMSSQL } from '../utils/mssql';
 
 export default (socket: Socket) => async (data: User) => {
   let user;
+  let result;
   try {
     user = await sql.query(
       boilMSSQL(`SELECT * FROM %db.[Users] WHERE id = ${data.user_id};`),
@@ -18,7 +19,7 @@ export default (socket: Socket) => async (data: User) => {
   }
   if (data.online) {
     try {
-      const result = await sql.query(
+      result = await sql.query(
         boilMSSQL(`
         UPDATE Users
         SET IsOnline = true
@@ -36,7 +37,7 @@ export default (socket: Socket) => async (data: User) => {
     }
   } else {
     try {
-      const result = await sql.query(
+      result = await sql.query(
         boilMSSQL(`
         UPDATE Users
         SET IsOnline = false
@@ -53,4 +54,8 @@ export default (socket: Socket) => async (data: User) => {
       console.error(error);
     }
   }
+  socket.emit('status response', {
+    user_id: data.user_id,
+    online: data.online,
+  });
 };
