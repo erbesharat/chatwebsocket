@@ -20,11 +20,9 @@ export default (socket: Socket) => async (data: User) => {
   if (data.online) {
     try {
       result = await sql.query(
-        boilMSSQL(`
-        UPDATE Users
-        SET IsOnline = true
-        WHERE Id = ${data.user_id};
-        `),
+        boilMSSQL(
+          `UPDATE %db.[Users] SET IsOnline = 1 WHERE id = ${data.user_id};`,
+        ),
       );
       console.log('Status result: \n', result);
     } catch (error) {
@@ -38,11 +36,9 @@ export default (socket: Socket) => async (data: User) => {
   } else {
     try {
       result = await sql.query(
-        boilMSSQL(`
-        UPDATE Users
-        SET IsOnline = false
-        WHERE Id = ${data.user_id};
-        `),
+        boilMSSQL(
+          `UPDATE %db.[Users] SET IsOnline = 0 WHERE id = ${data.user_id};`,
+        ),
       );
       console.log('Status result: \n', result);
     } catch (error) {

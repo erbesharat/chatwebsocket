@@ -18,6 +18,9 @@ function handleWebsocket(socket) {
         msg,
         '\n',
       );
+      if (typeof msg === 'string') {
+        msg = JSON.parse(msg);
+      }
       return socketHandlers[event](socket)(msg);
     });
     console.log('Regsitered', event);
