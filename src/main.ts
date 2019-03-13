@@ -27,7 +27,9 @@ function handleWebsocket(socket) {
 async function startServer() {
   try {
     await sql.connect(
-      'mssql://Erfan:34uxwp7Mco7@185.211.57.185/WellinnoApiDBTestWebsocket',
+      `mssql://${process.env.DB_USER}:${process.env.DB_PASS}@${
+        process.env.DB_HOST
+      }/${process.env.DB_NAME}`,
     );
     socketServer.on('connection', socket => {
       console.log('connected');
