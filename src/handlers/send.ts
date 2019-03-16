@@ -27,8 +27,8 @@ export default (socket: Socket) => async (data: Message) => {
       '\n(SEND MESSAGE) IDs: !\n' + id + ',' + user_id + ',' + recipient_id,
     );
     console.log(
-      `\nExpected: [${user_id},${recipient_id}],
-      Got: [${data.user_id}]\n`,
+      `\nExpected: [${user_id},${recipient_id}] - ${user_id != data.user_id},
+      Got: [${data.user_id}]\n - ${recipient_id != data.user_id}`,
     );
     socket.emit(
       'logs response',
