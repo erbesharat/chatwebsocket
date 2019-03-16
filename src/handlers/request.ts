@@ -7,13 +7,21 @@ import { sql } from '../server';
 import { JoinMessage } from '../types';
 
 export default (socket: Socket) => async (data: RequestJoin) => {
-  const result = await sql.query(
+  var result = await sql.query(
     boilMSSQL(
       `SELECT * FROM %db.[rooms] WHERE user_id = ${
         data.user_id
       } AND recipient_id = ${data.recipient_id};`,
     ),
   );
+
+  if (result.rowsAffected[0] === 0) {
+    result = await sql.query(
+      boilMSSQL(
+        `SELECT * FROM %db.[rooms] WHERE recipient_id = ${data.recipient_id};`,
+      ),
+    );
+  }
 
   if (result.rowsAffected[0] === 0) {
     // Create room
