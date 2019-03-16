@@ -16,9 +16,11 @@ export default (socket: Socket) => async (data: RequestJoin) => {
   );
 
   if (result.rowsAffected[0] === 0) {
-    result = await sql.query(
+    var result = await sql.query(
       boilMSSQL(
-        `SELECT * FROM %db.[rooms] WHERE recipient_id = ${data.recipient_id};`,
+        `SELECT * FROM %db.[rooms] WHERE user_id = ${
+          data.recipient_id
+        } AND recipient_id = ${data.user_id};`,
       ),
     );
   }
