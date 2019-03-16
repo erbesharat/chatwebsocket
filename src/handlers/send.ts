@@ -10,7 +10,7 @@ export default (socket: Socket) => async (data: Message) => {
 
   if (result.rowsAffected[0] === 0) {
     socket.emit(
-      'send response',
+      'logs response',
       `[error]: room ${data.room_title} doesn't exist`,
     );
     return false;
@@ -21,7 +21,7 @@ export default (socket: Socket) => async (data: Message) => {
   const { id, user_id, recipient_id } = result.recordset[0];
   if (user_id !== data.user_id || recipient_id !== data.user_id) {
     socket.emit(
-      'send response',
+      'logs response',
       `[error]: user doesn't belong to room ${data.room_title}`,
     );
     return false;

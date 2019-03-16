@@ -10,6 +10,7 @@ export interface RequestJoin {
 }
 
 export interface JoinMessage {
+  type: string;
   success: boolean;
   room_title: string;
 }

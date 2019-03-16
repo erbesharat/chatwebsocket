@@ -11,8 +11,9 @@ export default (socket: Socket) => async (data: User) => {
       boilMSSQL(`SELECT * FROM %db.[Users] WHERE id = ${data.user_id};`),
     );
   } catch (error) {
-    socket.emit('status response', {
+    socket.emit('logs response', {
       error: {
+        type: 'status',
         message: "Couldn't find the user",
       },
     });
@@ -26,8 +27,9 @@ export default (socket: Socket) => async (data: User) => {
       );
       console.log('Status result: \n', result);
     } catch (error) {
-      socket.emit('status response', {
+      socket.emit('logs response', {
         error: {
+          type: 'status',
           message: "Couldn't set status to online",
         },
       });
@@ -42,15 +44,17 @@ export default (socket: Socket) => async (data: User) => {
       );
       console.log('Status result: \n', result);
     } catch (error) {
-      socket.emit('status response', {
+      socket.emit('logs response', {
         error: {
+          type: 'status',
           message: "Couldn't set status to offline",
         },
       });
       console.error(error);
     }
   }
-  socket.emit('status response', {
+  socket.emit('logs response', {
+    type: 'status',
     user_id: data.user_id,
     online: data.online,
   });

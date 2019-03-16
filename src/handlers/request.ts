@@ -27,14 +27,16 @@ export default (socket: Socket) => async (data: RequestJoin) => {
     );
 
     socket.join(roomID);
-    socket.emit('request response', {
+    socket.emit('logs response', {
+      type: 'request',
       success: true,
       room_title: roomID,
     } as JoinMessage);
   } else {
     // Join room
     socket.join(result.recordset[0].title);
-    socket.emit('request response', {
+    socket.emit('logs response', {
+      type: 'request',
       success: true,
       room_title: result.recordset[0].title,
     } as JoinMessage);
