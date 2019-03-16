@@ -26,6 +26,10 @@ export default (socket: Socket) => async (data: Message) => {
     console.log(
       '\n(SEND MESSAGE) IDs: !\n' + id + ',' + user_id + ',' + recipient_id,
     );
+    console.log(
+      `\nExpected: [${user_id},${recipient_id}],
+      Got: [${data.user_id}]\n`,
+    );
     socket.emit(
       'logs response',
       `[error]: user doesn't belong to room ${data.room_title}`,
