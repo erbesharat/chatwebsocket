@@ -21,7 +21,7 @@ export default (socket: Socket) => async (data: Message) => {
   console.log('\n\nResult:\n', result);
 
   const { id, user_id, recipient_id } = result.recordset[0];
-  if (user_id != data.user_id || recipient_id != data.user_id) {
+  if (user_id != data.user_id && recipient_id != data.user_id) {
     console.log('\n(SEND MESSAGE) Something is wrong with ids!\n');
     console.log(
       '\n(SEND MESSAGE) IDs: !\n' + id + ',' + user_id + ',' + recipient_id,
