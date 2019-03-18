@@ -35,7 +35,7 @@ async function startServer() {
       }/${process.env.DB_NAME}`,
     );
     socketServer.on('connection', socket => {
-      console.log('connected');
+      console.log('connected. ID: ' + socket.id);
       handleWebsocket(socket);
     });
     server.listen(process.env.PORT, function() {
