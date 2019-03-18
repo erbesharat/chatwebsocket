@@ -6,7 +6,11 @@ import { socketServer, sql } from '../server';
 export default (socket: Socket) => async (data: Profile) => {
   var user;
   try {
-    user = await sql.query(boilMSSQL(`SELECT * FROM %db.[UserDetails];`));
+    user = await sql.query(
+      boilMSSQL(
+        `SELECT * FROM %db.[UserDetails] WHERE UserId = ${data.user_id};`,
+      ),
+    );
   } catch (error) {
     socket.to(socket.id).emit('user response', {
       error: {
