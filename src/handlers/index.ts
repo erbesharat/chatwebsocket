@@ -4,6 +4,7 @@ import updateLastSeenHandler from './update-last-seen';
 import statusHandler from './status';
 import callHandler from './call';
 import callResponseHandler from './callResponse';
+import userProfileHandler from './userProfile';
 
 export default {
   request: requestHandler,
@@ -12,4 +13,5 @@ export default {
   status: statusHandler,
   call: callHandler,
   'call response': callResponseHandler,
+  'user profile': userProfileHandler,
 };
