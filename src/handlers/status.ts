@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { User } from '../types';
 import { socketServer, sql } from '../server';
 import { boilMSSQL } from '../utils/mssql';
-import { moment } from 'moment-jalaali';
+import moment from 'moment-jalaali';
 
 export default (socket: Socket) => async (data: User) => {
   let user;
@@ -40,9 +40,9 @@ export default (socket: Socket) => async (data: User) => {
     try {
       result = await sql.query(
         boilMSSQL(
-          `UPDATE %db.[Users] SET IsOnline = 0, lastSeen = "${moment().format(
+          `UPDATE %db.[Users] SET IsOnline = 0, lastSeen = '${moment().format(
             'jYYYY/jM/jD HH:mm',
-          )}" WHERE id = ${data.user_id};`,
+          )}' WHERE id = ${data.user_id};`,
         ),
       );
       console.log('Status result: \n', result);
