@@ -46,6 +46,7 @@
     "@types/socket.io-client": "^1.4.32",
     "ava": "^1.2.1",
     "express": "4.15.2",
+    "moment-jalaali": "^0.8.3",
     "mssql": "^4.3.2",
     "mysql": "^2.16.0",
     "prettier": "^1.16.4",
