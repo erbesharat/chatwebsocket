@@ -6,6 +6,7 @@ import callHandler from './call';
 import callResponseHandler from './callResponse';
 import userProfileHandler from './userProfile';
 import userChatListHandler from './chatList';
+import callAnswerHandler from './callAnswer';
 
 export default {
   request: requestHandler,
@@ -16,4 +17,5 @@ export default {
   'call response': callResponseHandler,
   'user profile': userProfileHandler,
   'user list': userChatListHandler,
+  'call answer': callAnswerHandler,
 };

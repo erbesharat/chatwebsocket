@@ -36,7 +36,7 @@ export default (socket: Socket) => async (data: Call) => {
   try {
     fromStatus = await sql.query(
       boilMSSQL(
-        `UPDATE %db.[Users] SET CallStatus = 'Calling' WHERE Mobile = ${
+        `UPDATE %db.[Users] SET CallStatus = 'Calling', CallNumber = '${roomID}' WHERE Mobile = ${
           data.from_user
         };`,
       ),
@@ -47,7 +47,7 @@ export default (socket: Socket) => async (data: Call) => {
   try {
     toStatus = await sql.query(
       boilMSSQL(
-        `UPDATE %db.[Users] SET CallStatus = 'Ringing' WHERE Mobile = ${
+        `UPDATE %db.[Users] SET CallStatus = 'Ringing', CallNumber = '${roomID}' WHERE Mobile = ${
           data.to_user
         };`,
       ),

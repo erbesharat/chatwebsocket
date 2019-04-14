@@ -27,4 +27,5 @@ export interface CallResponse {
   from_status: string;
   to_status: string;
   type: string;
+  status: boolean;
 }
