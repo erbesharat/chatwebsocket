@@ -1,9 +1,8 @@
 import { Socket } from 'socket.io';
-import { Call, CallRequest } from '../types';
+import { Call, CallRequest, CallResponse } from '../types';
 import { socketServer, sql } from '../server';
 import { boilMSSQL } from '../utils/mssql';
 import uuid from 'uuid';
-import callRequest from './callResponse';
 
 export default (socket: Socket) => async (data: Call) => {
   const fromUser = await sql.query(
@@ -30,8 +29,39 @@ export default (socket: Socket) => async (data: Call) => {
   } catch (error) {
     console.error("\nCouldn't insert the message to database: ", error);
   }
-  socket.emit('call request', {
+
+  let fromStatus,
+    toStatus = null;
+
+  try {
+    fromStatus = await sql.query(
+      boilMSSQL(
+        `UPDATE %db.[Users] SET CallStatus = 'Calling' WHERE Mobile = ${
+          data.from_user
+        };`,
+      ),
+    );
+  } catch (error) {
+    console.error("\nCouldn't update from user's call status: ", error);
+  }
+  try {
+    toStatus = await sql.query(
+      boilMSSQL(
+        `UPDATE %db.[Users] SET CallStatus = 'Ringing' WHERE Mobile = ${
+          data.to_user
+        };`,
+      ),
+    );
+  } catch (error) {
+    console.error("\nCouldn't update to user's call status: ", error);
+  }
+
+  socket.emit('call response', {
     room_id: roomID,
-    to_user: toUserId,
-  } as CallRequest);
+    from_number: data.from_user,
+    to_number: data.to_user,
+    from_status: fromStatus.rowsAffected[0] == 1 ? 'Calling' : 'Available',
+    to_status: toStatus.rowsAffected[0] == 1 ? 'Ringing' : 'Available',
+    type: 'request',
+  } as CallResponse);
 };

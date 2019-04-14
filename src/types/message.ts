@@ -22,5 +22,9 @@ export interface CallRequest {
 
 export interface CallResponse {
   room_id: string;
-  accepted: boolean;
+  from_number: string;
+  to_number: string;
+  from_status: string;
+  to_status: string;
+  type: string;
 }
