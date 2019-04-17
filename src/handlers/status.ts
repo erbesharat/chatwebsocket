@@ -56,6 +56,11 @@ export default (socket: Socket) => async (data: User) => {
       console.error(error);
     }
   }
+  socket.emit('user response', {
+    type: 'status',
+    refresh: true,
+  });
+
   socket.emit('logs response', {
     type: 'status',
     user_id: data.user_id,

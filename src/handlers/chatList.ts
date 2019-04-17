@@ -60,7 +60,7 @@ export default (socket: Socket) => async (data: Profile) => {
     counter -= 1;
     if (counter === 0) {
       console.log('\n\n===\nResult: \n', result, '\n===\n');
-      socketServer.emit('user response', {
+      socketServer.to(socket.id).emit('user response', {
         type: 'list',
         rooms: result,
       });
