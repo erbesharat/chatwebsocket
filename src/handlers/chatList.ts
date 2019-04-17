@@ -32,7 +32,7 @@ export default (socket: Socket) => async (data: Profile) => {
   let result: any[] = [];
   rooms.recordset.forEach(async (room, i, arr) => {
     const oppositeUser =
-      room.user_id === data.user_id ? room.recipient_id : data.user_id;
+      room.user_id == data.user_id ? room.recipient_id : room.user_id;
     console.log('\n\n---------> ', oppositeUser);
     const user = await sql.query(
       boilMSSQL(`SELECT * FROM %db.[Users] WHERE Id = ${oppositeUser};`),
