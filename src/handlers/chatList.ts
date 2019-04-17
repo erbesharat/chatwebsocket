@@ -14,6 +14,7 @@ export default (socket: Socket) => async (data: Profile) => {
         } OR recipient_id = ${data.user_id};`,
       ),
     );
+    console.log('\n\n===\nRooms: \n', rooms, '\n===\n');
   } catch (error) {
     socket.to(socket.id).emit('user response', {
       error: {
@@ -56,6 +57,7 @@ export default (socket: Socket) => async (data: Profile) => {
     result.push(room);
     counter++;
     if (counter === arr.length - 1) {
+      console.log('\n\n===\nResult: \n', result, '\n===\n');
       socketServer.to(socket.id).emit('user response', {
         type: 'list',
         rooms: result,
