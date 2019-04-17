@@ -16,11 +16,18 @@ export default (socket: Socket) => async (data: RequestJoin) => {
     );
 
     if (user.rowsAffected[0] === 0 || recipient.rowsAffected[0] === 0) {
-      // TODO: Send error: user not found
+      socket.emit('logs response', {
+        type: 'error',
+        message: 'User not found',
+      });
       return;
     }
   } catch (err) {
-    // TODO: Send error: database error
+    socket.emit('logs response', {
+      type: 'error',
+      message: 'Database is down',
+    });
+    return;
   }
 
   let room;
