@@ -46,7 +46,6 @@ export default (socket: Socket) => async (data: Profile) => {
     if (user.recordset[0]) {
       const { IsOnline, lastSeen } = user.recordset[0];
       console.log('\n\n====', IsOnline, lastSeen);
-      room.recipient_id = oppositeUser;
       room.recipient_status = IsOnline ? 'online' : 'offline';
       room.recipient_lastseen = lastSeen ? lastSeen : null;
 
