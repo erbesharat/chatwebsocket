@@ -45,6 +45,7 @@ export default (socket: Socket) => async (data: Profile) => {
 
     if (user.recordset[0]) {
       const { IsOnline, lastSeen } = user.recordset;
+      console.log('\n\n====', IsOnline, lastSeen);
       room.recipient_id = oppositeUser;
       room.recipient_status = IsOnline ? 'online' : 'offline';
       room.recipient_lastseen = lastSeen ? lastSeen : null;
@@ -60,7 +61,7 @@ export default (socket: Socket) => async (data: Profile) => {
     counter -= 1;
     if (counter === 0) {
       console.log('\n\n===\nResult: \n', result, '\n===\n');
-      socketServer.to(socket.id).emit('user response', {
+      socketServer.emit('user response', {
         type: 'list',
         rooms: result,
       });
