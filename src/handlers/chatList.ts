@@ -26,7 +26,7 @@ export default (socket: Socket) => async (data: Profile) => {
     return;
   }
 
-  let counter: number = 0;
+  let counter: number = rooms.recordset.length;
 
   // Find status of each room's users
   let result: any[] = [];
@@ -55,8 +55,8 @@ export default (socket: Socket) => async (data: Profile) => {
     }
 
     result.push(room);
-    counter++;
-    if (counter === arr.length - 1) {
+    counter -= 1;
+    if (counter === 0) {
       console.log('\n\n===\nResult: \n', result, '\n===\n');
       socketServer.to(socket.id).emit('user response', {
         type: 'list',
