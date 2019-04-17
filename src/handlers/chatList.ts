@@ -67,8 +67,4 @@ export default (socket: Socket) => async (data: Profile) => {
       });
     }
   });
-  socket.emit('user response', {
-    type: 'status',
-    refresh: true,
-  });
 };

@@ -56,7 +56,7 @@ export default (socket: Socket) => async (data: User) => {
       console.error(error);
     }
   }
-  socket.emit('user response', {
+  socketServer.emit('user response', {
     type: 'status',
     refresh: true,
   });
