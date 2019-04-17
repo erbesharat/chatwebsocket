@@ -52,5 +52,5 @@ export default (socket: Socket) => async (data: Message) => {
     console.error("\nCouldn't insert the message to database: ", error);
   }
 
-  socketServer.sockets.in(data.room_title).emit('receive', data);
+  socketServer.emit('receive', data);
 };
