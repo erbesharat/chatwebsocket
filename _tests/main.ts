@@ -158,6 +158,7 @@ test.skip('It should send a call request', async t => {
     from_user: '09111',
     to_user: '09111',
     type: 'video',
+    room_id: '',
   };
 
   socket.emit('call', request);

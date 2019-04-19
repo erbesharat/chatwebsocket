@@ -5,7 +5,7 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/static/pages/index.html');
 });
 
-function handleWebsocket(socket) {
+function handleWebsocket(socket, permanentData) {
   console.log('Listeners', Object.keys(socketHandlers));
   Object.keys(socketHandlers).forEach(event => {
     socket.on(event, msg => {
@@ -21,7 +21,7 @@ function handleWebsocket(socket) {
       if (typeof msg === 'string') {
         msg = JSON.parse(msg);
       }
-      return socketHandlers[event](socket)(msg);
+      return socketHandlers[event](socket, permanentData)(msg);
     });
     console.log('Regsitered', event);
   });
@@ -36,7 +36,8 @@ async function startServer() {
     );
     socketServer.on('connection', socket => {
       console.log('connected. ID: ' + socket.id);
-      handleWebsocket(socket);
+      const permanentData = {};
+      handleWebsocket(socket, permanentData);
     });
     server.listen(process.env.PORT, function() {
       console.log(`listening on *:${process.env.PORT}`);

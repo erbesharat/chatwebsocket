@@ -4,7 +4,7 @@ import { socketServer, sql } from '../server';
 import { boilMSSQL } from '../utils/mssql';
 import moment from 'moment-jalaali';
 
-export default (socket: Socket) => async (data: User) => {
+export default (socket: Socket) => async (data: User, perm) => {
   let user;
   let result;
   try {
@@ -18,7 +18,9 @@ export default (socket: Socket) => async (data: User) => {
         message: "Couldn't find the user",
       },
     });
+    return;
   }
+  perm.user_id = data.user_id;
   if (data.online) {
     try {
       result = await sql.query(

@@ -7,6 +7,9 @@ import callResponseHandler from './callResponse';
 import userProfileHandler from './userProfile';
 import userChatListHandler from './chatList';
 import callAnswerHandler from './callAnswer';
+import disconnectHandler from './disconnect';
+
+let UserID;
 
 export default {
   request: requestHandler,
@@ -18,4 +21,5 @@ export default {
   'user profile': userProfileHandler,
   'user list': userChatListHandler,
   'call answer': callAnswerHandler,
+  disconnect: disconnectHandler,
 };
