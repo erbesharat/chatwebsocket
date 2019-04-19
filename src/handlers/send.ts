@@ -1,7 +1,8 @@
 import { Socket } from 'socket.io';
-import { Message } from '../types';
+import { Message, User } from '../types';
 import { boilMSSQL } from '../utils/mssql';
 import { socketServer, sql } from '../server';
+import { O_SYMLINK } from 'constants';
 
 export default (socket: Socket) => async (data: Message) => {
   const result = await sql.query(
@@ -19,6 +20,35 @@ export default (socket: Socket) => async (data: Message) => {
   }
 
   console.log('\n\nResult:\n', result);
+
+  let user;
+  // Charge user
+  try {
+    user = await sql.query(
+      boilMSSQL(`SELECT * FROM %db.[Users] WHERE id = ${data.user_id};`),
+    );
+  } catch (error) {
+    socket.emit('logs response', {
+      type: 'send',
+      error: {
+        message: "Couldn't find the user",
+      },
+    });
+    return;
+  }
+
+  let messagePrice = data.message.length * parseFloat(process.env.TEXT_RATE);
+
+  if (user.recordset[0].charge! >= messagePrice) {
+    socket.emit('logs response', {
+      type: 'send',
+      error: {
+        code: 422,
+        message: 'Not enough credit',
+      },
+    });
+    return;
+  }
 
   const { id, user_id, recipient_id } = result.recordset[0];
   if (user_id != data.user_id && recipient_id != data.user_id) {
@@ -50,6 +80,24 @@ export default (socket: Socket) => async (data: Message) => {
     );
   } catch (error) {
     console.error("\nCouldn't insert the message to database: ", error);
+  }
+
+  try {
+    await sql.query(
+      boilMSSQL(
+        `UPDATE %db.[Users] SET charge = ${user.recordset[0].charge -
+          messagePrice} WHERE Id = ${data.user_id};`,
+      ),
+    );
+  } catch (error) {
+    console.error(`Couldn't charge the user with Id ${data.user_id}`);
+    socket.emit('logs response', {
+      type: 'send',
+      error: {
+        code: 522,
+        message: `Couldn't charge the user with Id ${data.user_id}`,
+      },
+    });
   }
 
   socketServer.emit('receive', data);
