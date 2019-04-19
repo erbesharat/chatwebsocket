@@ -4,7 +4,7 @@ import { socketServer, sql } from '../server';
 import { boilMSSQL } from '../utils/mssql';
 import moment from 'moment-jalaali';
 
-export default (socket: Socket) => async (data: User, perm) => {
+export default (socket: Socket, perm) => async (data: User) => {
   let user;
   let result;
   try {

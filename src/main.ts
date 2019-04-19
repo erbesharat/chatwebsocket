@@ -6,6 +6,7 @@ app.get('/', function(req, res) {
 });
 
 function handleWebsocket(socket, permanentData) {
+  console.log(permanentData);
   console.log('Listeners', Object.keys(socketHandlers));
   Object.keys(socketHandlers).forEach(event => {
     socket.on(event, msg => {
@@ -18,7 +19,7 @@ function handleWebsocket(socket, permanentData) {
         msg,
         '\n',
       );
-      if (typeof msg === 'string') {
+      if (event !== 'disconnect' && typeof msg === 'string') {
         msg = JSON.parse(msg);
       }
       return socketHandlers[event](socket, permanentData)(msg);
