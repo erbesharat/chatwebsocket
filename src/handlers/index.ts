@@ -1,5 +1,6 @@
 import { Socket } from 'socket.io';
-import { socketServer } from '../server';
+import { socketServer, sql } from '../server';
+import { boilMSSQL } from '../utils/mssql';
 
 import requestHandler from './request';
 import sendHandler from './send';
@@ -26,7 +27,7 @@ export default {
   'call answer': callAnswerHandler,
   disconnect: disconnectHandler,
   refresh: (socket: Socket) => async data => {
-    socketServer.emit('user response', {
+    socketServer.to(data.room_title).emit('user response', {
       type: 'status',
       refresh: true,
     });

@@ -1,5 +1,6 @@
 import { app, socketServer, server, sql } from './server';
 import socketHandlers from './handlers';
+require('dotenv').config();
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/static/pages/index.html');
