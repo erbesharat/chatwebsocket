@@ -1,3 +1,6 @@
+import { Socket } from 'socket.io';
+import { socketServer } from '../server';
+
 import requestHandler from './request';
 import sendHandler from './send';
 import updateLastSeenHandler from './update-last-seen';
@@ -22,4 +25,10 @@ export default {
   'user list': userChatListHandler,
   'call answer': callAnswerHandler,
   disconnect: disconnectHandler,
+  refresh: (socket: Socket) => async data => {
+    socketServer.emit('user response', {
+      type: 'status',
+      refresh: true,
+    });
+  },
 };
