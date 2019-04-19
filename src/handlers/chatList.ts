@@ -43,9 +43,21 @@ export default (socket: Socket) => async (data: Profile) => {
       ),
     );
 
+    const lastMessage = await sql.query(
+      boilMSSQL(
+        `SELECT TOP 1 * FROM chat_messages where room_id = ${
+          room.id
+        } ORDER BY ID DESC;`,
+      ),
+    );
+    console.log('\n\n\n++++\n', lastMessage, '\n\n++++');
+
     if (user.recordset[0]) {
       const { IsOnline, lastSeen } = user.recordset[0];
       console.log('\n\n====', IsOnline, lastSeen);
+      room.last_message = lastMessage.recordset[0]
+        ? lastMessage.recordset[0].text
+        : '';
       room.recipient_id = oppositeUser;
       room.recipient_status = IsOnline ? 'online' : 'offline';
       room.recipient_lastseen = lastSeen ? lastSeen : null;
