@@ -65,3 +65,12 @@ export default (socket: Socket) => async (data: Call) => {
     type: 'request',
   } as CallResponse);
 };
+
+// {
+//   error: {
+//     message: "sdsadasd",
+//   }
+// }
+
+// TODO: Check status - Available - isOnline
+// TODO: Reject Call

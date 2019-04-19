@@ -58,6 +58,9 @@ export default (socket: Socket) => async (data: Profile) => {
       room.last_message = lastMessage.recordset[0]
         ? lastMessage.recordset[0].text
         : '';
+      room.last_message_date = lastMessage.recordset[0]
+        ? lastMessage.recordset[0].created_at
+        : '';
       room.recipient_id = oppositeUser;
       room.recipient_status = IsOnline ? 'online' : 'offline';
       room.recipient_lastseen = lastSeen ? lastSeen : null;

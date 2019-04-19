@@ -3,6 +3,7 @@ import { Message, User } from '../types';
 import { boilMSSQL } from '../utils/mssql';
 import { socketServer, sql } from '../server';
 import { O_SYMLINK } from 'constants';
+import moment from 'moment-jalaali';
 
 export default (socket: Socket) => async (data: Message) => {
   const result = await sql.query(
@@ -74,7 +75,7 @@ export default (socket: Socket) => async (data: Message) => {
         `INSERT INTO %db.[chat_messages] (author_id, room_id, text, created_at)
          VALUES ('${data.user_id}', ${id}, '${
           data.message
-        }', '${new Date().toISOString()}')
+        }', '${moment().format('jYYYY/jM/jD HH:mm')}')
         `,
       ),
     );
