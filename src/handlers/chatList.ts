@@ -44,6 +44,9 @@ export default (socket: Socket) => async (data: Profile) => {
           `SELECT * FROM %db.[UserDetails] WHERE UserId = ${oppositeUser};`,
         ),
       );
+      const recipientUser = await sql.query(
+        boilMSSQL(`SELECT * FROM %db.[Users] WHERE Id = ${oppositeUser};`),
+      );
 
       const lastMessage = await sql.query(
         boilMSSQL(
@@ -75,9 +78,11 @@ export default (socket: Socket) => async (data: Profile) => {
         room.recipient_lastseen = lastSeen ? lastSeen : null;
 
         if (details.recordset[0]) {
-          const { ImageAddress, FullName } = details.recordset[0];
+          const { ImageAddress, FullName, visitCost } = details.recordset[0];
           room.recipient_avatar = ImageAddress ? ImageAddress : null;
           room.recipient_name = FullName ? FullName : null;
+          room.recipient_visit_cost =
+            recipientUser.recordset[0].RoleId != 1 ? visitCost : 'user';
         }
       }
 
