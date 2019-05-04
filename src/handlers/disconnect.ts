@@ -8,7 +8,7 @@ export default (socket: Socket, perm) => async data => {
     const result = await sql.query(
       boilMSSQL(
         `UPDATE %db.[Users] SET IsOnline = 0, lastSeen = '${moment().format(
-          'jYYYY/jM/jD HH:mm',
+          'YYYY-MM-DD HH:mm',
         )}' WHERE id = ${perm.user_id};`,
       ),
     );

@@ -39,8 +39,9 @@ export default (socket: Socket) => async (data: Message) => {
   }
 
   let messagePrice = data.message.length * parseFloat(process.env.TEXT_RATE);
+  console.log('\n\n\t\t\t\t', messagePrice, '\t', user.recordset[0].charge);
 
-  if (user.recordset[0].charge! >= messagePrice) {
+  if (user.recordset[0].charge < messagePrice) {
     socket.emit('logs response', {
       type: 'send',
       error: {
@@ -51,11 +52,11 @@ export default (socket: Socket) => async (data: Message) => {
     return;
   }
 
-  const { id, user_id, recipient_id } = result.recordset[0];
+  const { Id, user_id, recipient_id } = result.recordset[0];
   if (user_id != data.user_id && recipient_id != data.user_id) {
     console.log('\n(SEND MESSAGE) Something is wrong with ids!\n');
     console.log(
-      '\n(SEND MESSAGE) IDs: !\n' + id + ',' + user_id + ',' + recipient_id,
+      '\n(SEND MESSAGE) IDs: !\n' + Id + ',' + user_id + ',' + recipient_id,
     );
     console.log(
       `\nExpected: [${user_id},${recipient_id}] - ${user_id != data.user_id},
@@ -67,16 +68,23 @@ export default (socket: Socket) => async (data: Message) => {
     );
     return false;
   }
-
+  console.log(
+    '\n\n\n\t',
+    boilMSSQL(
+      `INSERT INTO %db.[chat_message] (author_id, room_id, text, created_at, messagetypeid)
+     VALUES ('${data.user_id}', ${Id}, '${data.message}', '${moment().format(
+        'YYYY-MM-DD HH:mm',
+      )}', ${data.type_id})`,
+    ),
+  );
   try {
     console.log('\n(SEND MESSAGE) Goest to create the message in DB!\n');
     await sql.query(
       boilMSSQL(
-        `INSERT INTO %db.[chat_messages] (author_id, room_id, text, created_at)
-         VALUES ('${data.user_id}', ${id}, '${
+        `INSERT INTO %db.[chat_message] (author_id, room_id, text, created_at, messagetypeid)
+         VALUES ('${data.user_id}', ${Id}, '${
           data.message
-        }', '${moment().format('jYYYY/jM/jD HH:mm')}')
-        `,
+        }', '${moment().format('YYYY-MM-DD HH:mm')}', ${data.type_id})`,
       ),
     );
   } catch (error) {
