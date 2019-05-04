@@ -18,10 +18,8 @@ export default (socket: Socket) => async (data: Profile) => {
     console.log('\n\n===\nRooms: \n', rooms, '\n===\n');
   } catch (error) {
     socketServer.to(socket.id).emit('user response', {
-      error: {
-        type: 'list',
-        message: "Couldn't find the user",
-      },
+      type: 'error',
+      message: "Couldn't find the user",
     });
     console.error(error);
     return;
@@ -31,10 +29,8 @@ export default (socket: Socket) => async (data: Profile) => {
   if (rooms.recordset.length < 1) {
     console.log('\n\nNot FOund\n\n');
     socketServer.to(socket.id).emit('user response', {
-      error: {
-        type: 'list',
-        message: 'No room found',
-      },
+      type: 'error',
+      message: 'No room found',
     });
   }
   // Find status of each room's users
@@ -105,10 +101,8 @@ export default (socket: Socket) => async (data: Profile) => {
       }
     } catch (err) {
       socketServer.to(socket.id).emit('user response', {
-        error: {
-          type: 'list',
-          message: 'Datebase error',
-        },
+        type: 'error',
+        message: 'Datebase error',
       });
       console.log('==================', 'REQUEST PARAMS:', room);
       console.error(err);
