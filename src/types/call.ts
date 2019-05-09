@@ -3,4 +3,5 @@ export interface Call {
   to_user: string;
   type: string;
   room_id: string;
+  answered: boolean;
 }

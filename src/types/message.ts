@@ -23,10 +23,11 @@ export interface CallRequest {
 
 export interface CallResponse {
   room_id: string;
-  from_number: string;
-  to_number: string;
+  from_id: string;
+  to_id: string;
   from_status: string;
   to_status: string;
   type: string;
   status: boolean;
+  call_type: string;
 }

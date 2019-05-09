@@ -6,20 +6,28 @@ import uuid from 'uuid';
 
 export default (socket: Socket) => async (data: Call) => {
   const fromUser = await sql.query(
-    boilMSSQL(`SELECT * FROM %db.[Users] WHERE Mobile = '${data.from_user}';`),
+    boilMSSQL(`SELECT * FROM %db.[Users] WHERE Id = '${data.from_user}';`),
   );
   let { Id } = fromUser.recordset[0];
   const fromUserID = Id;
 
   const toUser = await sql.query(
-    boilMSSQL(`SELECT * FROM %db.[Users] WHERE Mobile = '${data.to_user}';`),
+    boilMSSQL(`SELECT * FROM %db.[Users] WHERE Id = '${data.to_user}';`),
   );
   const toUserId = toUser.recordset[0].Id;
 
+  let CallStatus, IsBusy;
+  if (data.answered) {
+    CallStatus = 'Busy';
+    IsBusy = 1;
+  } else {
+    CallStatus = 'Available';
+    IsBusy = 0;
+  }
   try {
     await sql.query(
       boilMSSQL(
-        `UPDATE %db.[Users] SET IsBusy = 1, CallStatus = 'Busy' WHERE Id = ${fromUserID};`,
+        `UPDATE %db.[Users] SET IsBusy = ${IsBusy}, CallStatus = '${CallStatus}' WHERE Id = ${fromUserID};`,
       ),
     );
   } catch (error) {
@@ -28,7 +36,7 @@ export default (socket: Socket) => async (data: Call) => {
   try {
     await sql.query(
       boilMSSQL(
-        `UPDATE %db.[Users] SET IsBusy = 1, CallStatus = 'Busy' WHERE Id = ${toUserId};`,
+        `UPDATE %db.[Users] SET IsBusy = ${IsBusy}, CallStatus = '${CallStatus}' WHERE Id = ${toUserId};`,
       ),
     );
   } catch (error) {
@@ -37,7 +45,7 @@ export default (socket: Socket) => async (data: Call) => {
 
   socket.emit('call response', {
     room_id: data.room_id,
-    status: true,
+    status: data.answered,
     type: 'answer',
   } as CallResponse);
 };
