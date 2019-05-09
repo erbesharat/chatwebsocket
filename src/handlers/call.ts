@@ -17,6 +17,23 @@ export default (socket: Socket) => async (data: Call) => {
   );
   const toUserId = toUser.recordset[0].Id;
 
+  if (
+    !(
+      fromUser.recordset[0].IsOnline &&
+      fromUser.recordset[0].CallStatus == 'Available'
+    ) &&
+    !(
+      toUser.recordset[0].IsOnline &&
+      toUser.recordset[0].CallStatus == 'Available'
+    )
+  ) {
+    socket.emit('call response', {
+      type: 'error',
+      message: 'Users are not available',
+    });
+    return;
+  }
+
   const roomID = uuid.v4();
   var result;
   try {
@@ -77,4 +94,3 @@ export default (socket: Socket) => async (data: Call) => {
 // }
 
 // TODO: Check status - Available - isOnline
-// TODO: Reject Call
