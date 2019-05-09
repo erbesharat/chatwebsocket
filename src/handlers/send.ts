@@ -82,7 +82,7 @@ export default (socket: Socket) => async (data: Message) => {
     await sql.query(
       boilMSSQL(
         `INSERT INTO %db.[chat_message] (author_id, room_id, text, created_at, messagetypeid)
-         VALUES ('${data.user_id}', ${Id}, '${
+         VALUES ('${data.user_id}', ${Id}, N'${
           data.message
         }', '${moment().format('YYYY-MM-DD HH:mm:ss.SSS')}', ${data.type_id})`,
       ),
