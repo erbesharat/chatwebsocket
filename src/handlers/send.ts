@@ -84,7 +84,7 @@ export default (socket: Socket) => async (data: Message) => {
         `INSERT INTO %db.[chat_message] (author_id, room_id, text, created_at, messagetypeid)
          VALUES ('${data.user_id}', ${Id}, '${
           data.message
-        }', '${moment().format('YYYY-MM-DD HH:mm')}', ${data.type_id})`,
+        }', '${moment().format('YYYY-MM-DD HH:mm:ss.SSS')}', ${data.type_id})`,
       ),
     );
   } catch (error) {
