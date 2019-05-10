@@ -12,6 +12,7 @@ import userProfileHandler from './userProfile';
 import userChatListHandler from './chatList';
 import callAnswerHandler from './callAnswer';
 import disconnectHandler from './disconnect';
+import callStatusHandler from './callStatus';
 
 let UserID;
 
@@ -25,6 +26,7 @@ export default {
   'user profile': userProfileHandler,
   'user list': userChatListHandler,
   'call answer': callAnswerHandler,
+  'call status': callStatusHandler,
   disconnect: disconnectHandler,
   refresh: (socket: Socket) => async data => {
     socketServer.to(data.room_title).emit('user response', {

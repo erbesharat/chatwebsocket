@@ -1,11 +1,13 @@
 import { Socket } from 'socket.io';
-import { Call, CallRequest, CallResponse } from '../types';
+import { Call, CallRequest, CallResponse, GlobalData } from '../types';
 import { socketServer, sql } from '../server';
 import { boilMSSQL } from '../utils/mssql';
 import uuid from 'uuid';
 import moment from 'moment-jalaali';
 
-export default (socket: Socket) => async (data: Call) => {
+export default (socket: Socket, _, global: GlobalData) => async (
+  data: Call,
+) => {
   const fromUser = await sql.query(
     boilMSSQL(`SELECT * FROM %db.[Users] WHERE Id = '${data.from_user}';`),
   );
@@ -17,21 +19,23 @@ export default (socket: Socket) => async (data: Call) => {
   );
   const toUserId = toUser.recordset[0].Id;
 
-  if (
-    !(
-      fromUser.recordset[0].IsOnline &&
-      fromUser.recordset[0].CallStatus == 'Available'
-    ) &&
-    !(
-      toUser.recordset[0].IsOnline &&
-      toUser.recordset[0].CallStatus == 'Available'
-    )
-  ) {
-    socket.emit('call response', {
-      type: 'error',
-      message: 'Users are not available',
-    });
-    return;
+  if (!global.users[data.to_user]) {
+    if (
+      !(
+        fromUser.recordset[0].IsOnline &&
+        fromUser.recordset[0].CallStatus == 'Available'
+      ) &&
+      !(
+        toUser.recordset[0].IsOnline &&
+        toUser.recordset[0].CallStatus == 'Available'
+      )
+    ) {
+      socket.emit('call response', {
+        type: 'error',
+        message: 'Users are not available',
+      });
+      return;
+    }
   }
 
   const roomID = uuid.v4();

@@ -1,12 +1,14 @@
 import { app, socketServer, server, sql } from './server';
 import socketHandlers from './handlers';
+import { GlobalData } from './types';
+
 require('dotenv').config();
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/static/pages/index.html');
 });
 
-function handleWebsocket(socket, permanentData) {
+function handleWebsocket(socket, permanentData, globalData) {
   console.log(permanentData);
   console.log('Listeners', Object.keys(socketHandlers));
   Object.keys(socketHandlers).forEach(event => {
@@ -23,7 +25,7 @@ function handleWebsocket(socket, permanentData) {
       if (event !== 'disconnect' && typeof msg === 'string') {
         msg = JSON.parse(msg);
       }
-      return socketHandlers[event](socket, permanentData)(msg);
+      return socketHandlers[event](socket, permanentData, globalData)(msg);
     });
     console.log('Regsitered', event);
   });
@@ -31,6 +33,10 @@ function handleWebsocket(socket, permanentData) {
 
 async function startServer() {
   try {
+    const globalData: GlobalData = {
+      users: {},
+    };
+
     await sql.connect(
       `mssql://${process.env.DB_USER}:${process.env.DB_PASS}@${
         process.env.DB_HOST
@@ -39,7 +45,7 @@ async function startServer() {
     socketServer.on('connection', socket => {
       console.log('connected. ID: ' + socket.id);
       const permanentData = {};
-      handleWebsocket(socket, permanentData);
+      handleWebsocket(socket, permanentData, globalData);
     });
     server.listen(process.env.PORT, function() {
       console.log(`listening on *:${process.env.PORT}`);

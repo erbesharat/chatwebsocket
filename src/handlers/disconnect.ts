@@ -2,8 +2,9 @@ import { Socket } from 'socket.io';
 import { socketServer, sql } from '../server';
 import { boilMSSQL } from '../utils/mssql';
 import moment from 'moment-jalaali';
+import { GlobalData } from '../types';
 
-export default (socket: Socket, perm) => async data => {
+export default (socket: Socket, perm, global: GlobalData) => async data => {
   if (perm.user_id != null) {
     const result = await sql.query(
       boilMSSQL(
@@ -12,5 +13,6 @@ export default (socket: Socket, perm) => async data => {
         )}' WHERE id = ${perm.user_id};`,
       ),
     );
+    global.users[perm.user_id] = null;
   }
 };
