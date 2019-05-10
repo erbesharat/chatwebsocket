@@ -39,6 +39,8 @@ export default (socket: Socket) => async (data: Message) => {
   }
 
   let messagePrice = data.message.length * parseFloat(process.env.TEXT_RATE);
+  let wellinnoShare = (messagePrice / 100) * 20;
+  let medicalTeamShare = messagePrice - wellinnoShare;
   console.log('\n\n\t\t\t\t', messagePrice, '\t', user.recordset[0].charge);
 
   if (user.recordset[0].charge < messagePrice) {
@@ -94,16 +96,23 @@ export default (socket: Socket) => async (data: Message) => {
   if (user.recordset[0].RoleId == 1) {
     // Create the transaction
     try {
+      await sql.query(
+        boilMSSQL(
+          `INSERT INTO %db.[CalculatedBalances] (fromUserId, toUserId, UserUsedPrice, MedicalPercentPrice, WellinnoPercentPrice, logDateTime, messagetypeid)
+          VALUES ('${
+            data.user_id
+          }', ${recipient_id}, ${messagePrice}, ${medicalTeamShare}, ${wellinnoShare}, '${moment().format(
+            'YYYY-MM-DD HH:mm:ss.SSS',
+          )}', ${data.type_id})`,
+        ),
+      );
       console.log('Create the transaction for message');
     } catch (error) {
       socketServer.emit('logs response', {
-        type: 'send',
-        error: {
-          code: 522,
-          message: `Couldn't create the transaction for user with Id ${
-            data.user_id
-          }`,
-        },
+        type: 'error',
+        message: `Couldn't create the transaction for user with Id ${
+          data.user_id
+        }`,
       });
     }
     // Decrease the credit
@@ -114,14 +123,17 @@ export default (socket: Socket) => async (data: Message) => {
             messagePrice} WHERE Id = ${data.user_id};`,
         ),
       );
+      await sql.query(
+        boilMSSQL(
+          `UPDATE %db.[Users] SET charge = ${user.recordset[0].charge +
+            medicalTeamShare} WHERE Id = ${recipient_id};`,
+        ),
+      );
     } catch (error) {
       console.error(`Couldn't charge the user with Id ${data.user_id}`);
       socket.emit('logs response', {
-        type: 'send',
-        error: {
-          code: 522,
-          message: `Couldn't charge the user with Id ${data.user_id}`,
-        },
+        type: 'error',
+        message: `Couldn't charge the user with Id ${data.user_id}`,
       });
     }
   }
