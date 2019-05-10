@@ -91,22 +91,39 @@ export default (socket: Socket) => async (data: Message) => {
     console.error("\nCouldn't insert the message to database: ", error);
   }
 
-  try {
-    await sql.query(
-      boilMSSQL(
-        `UPDATE %db.[Users] SET charge = ${user.recordset[0].charge -
-          messagePrice} WHERE Id = ${data.user_id};`,
-      ),
-    );
-  } catch (error) {
-    console.error(`Couldn't charge the user with Id ${data.user_id}`);
-    socket.emit('logs response', {
-      type: 'send',
-      error: {
-        code: 522,
-        message: `Couldn't charge the user with Id ${data.user_id}`,
-      },
-    });
+  if (user.recordset[0].RoleId == 1) {
+    // Create the transaction
+    try {
+      console.log('Create the transaction for message');
+    } catch (error) {
+      socketServer.emit('logs response', {
+        type: 'send',
+        error: {
+          code: 522,
+          message: `Couldn't create the transaction for user with Id ${
+            data.user_id
+          }`,
+        },
+      });
+    }
+    // Decrease the credit
+    try {
+      await sql.query(
+        boilMSSQL(
+          `UPDATE %db.[Users] SET charge = ${user.recordset[0].charge -
+            messagePrice} WHERE Id = ${data.user_id};`,
+        ),
+      );
+    } catch (error) {
+      console.error(`Couldn't charge the user with Id ${data.user_id}`);
+      socket.emit('logs response', {
+        type: 'send',
+        error: {
+          code: 522,
+          message: `Couldn't charge the user with Id ${data.user_id}`,
+        },
+      });
+    }
   }
 
   // TODO: Get user data from permenanatData object and send response only to them
