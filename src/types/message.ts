@@ -30,4 +30,8 @@ export interface CallResponse {
   type: string;
   status: boolean;
   call_type: string;
+  from_avatar: string;
+  to_avatar: string;
+  from_name: string;
+  to_name: string;
 }

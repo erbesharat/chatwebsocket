@@ -38,6 +38,18 @@ export default (socket: Socket, _, global: GlobalData) => async (
     }
   }
 
+  // Get users deatils
+  const fromDetails = await sql.query(
+    boilMSSQL(
+      `SELECT * FROM %db.[UserDetails] WHERE UserId = ${data.from_user};`,
+    ),
+  );
+  const toDetails = await sql.query(
+    boilMSSQL(
+      `SELECT * FROM %db.[UserDetails] WHERE UserId = ${data.to_user};`,
+    ),
+  );
+
   const roomID = uuid.v4();
   var result;
   try {
@@ -86,6 +98,18 @@ export default (socket: Socket, _, global: GlobalData) => async (
     to_id: data.to_user,
     from_status: fromStatus.rowsAffected[0] == 1 ? 'Calling' : 'Available',
     to_status: toStatus.rowsAffected[0] == 1 ? 'Ringing' : 'Available',
+    from_avatar: fromDetails.recordset[0].ImageAddress
+      ? fromDetails.recordset[0].ImageAddress
+      : '#',
+    to_avatar: toDetails.recordset[0].ImageAddress
+      ? toDetails.recordset[0].ImageAddress
+      : '#',
+    from_name: fromDetails.recordset[0].FullName
+      ? toDetails.recordset[0].FullName
+      : '',
+    to_name: toDetails.recordset[0].FullName
+      ? toDetails.recordset[0].FullName
+      : '',
     call_type: data.type,
     type: 'request',
   } as CallResponse);
