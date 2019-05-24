@@ -55,6 +55,20 @@ export default (socket: Socket) => async (data: Message) => {
   }
 
   const { Id, user_id, recipient_id } = result.recordset[0];
+  try {
+    console.log('\n(SEND MESSAGE) Goest to create the message in DB!\n');
+    await sql.query(
+      boilMSSQL(
+        `INSERT INTO %db.[chat_message] (author_id, room_id, text, created_at, messagetypeid)
+         VALUES ('${data.user_id}', ${Id}, N'${
+          data.message
+        }', '${moment().format('YYYY-MM-DD HH:mm:ss.SSS')}', ${data.type_id})`,
+      ),
+    );
+  } catch (error) {
+    console.error("\nCouldn't insert the message to database: ", error);
+  }
+
   if (user_id != data.user_id && recipient_id != data.user_id) {
     console.log('\n(SEND MESSAGE) Something is wrong with ids!\n');
     console.log(
@@ -69,28 +83,6 @@ export default (socket: Socket) => async (data: Message) => {
       `[error]: user doesn't belong to room ${data.room_title}`,
     );
     return false;
-  }
-  console.log(
-    '\n\n\n\t',
-    boilMSSQL(
-      `INSERT INTO %db.[chat_message] (author_id, room_id, text, created_at, messagetypeid)
-     VALUES ('${data.user_id}', ${Id}, '${data.message}', '${moment().format(
-        'YYYY-MM-DD HH:mm',
-      )}', ${data.type_id})`,
-    ),
-  );
-  try {
-    console.log('\n(SEND MESSAGE) Goest to create the message in DB!\n');
-    await sql.query(
-      boilMSSQL(
-        `INSERT INTO %db.[chat_message] (author_id, room_id, text, created_at, messagetypeid)
-         VALUES ('${data.user_id}', ${Id}, N'${
-          data.message
-        }', '${moment().format('YYYY-MM-DD HH:mm:ss.SSS')}', ${data.type_id})`,
-      ),
-    );
-  } catch (error) {
-    console.error("\nCouldn't insert the message to database: ", error);
   }
 
   if (user.recordset[0].RoleId == 1) {
