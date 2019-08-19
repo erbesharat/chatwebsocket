@@ -15,7 +15,6 @@ export default (socket: Socket) => async (data: Profile) => {
         } OR recipient_id = ${data.user_id};`,
       ),
     );
-    console.log('\n\n===\nRooms: \n', rooms, '\n===\n');
   } catch (error) {
     socketServer.to(socket.id).emit('user response', {
       type: 'error',
@@ -27,7 +26,6 @@ export default (socket: Socket) => async (data: Profile) => {
 
   let counter: number = rooms.recordset.length;
   if (rooms.recordset.length < 1) {
-    console.log('\n\nNot FOund\n\n');
     socketServer.to(socket.id).emit('user response', {
       type: 'error',
       message: 'No room found',
@@ -39,7 +37,6 @@ export default (socket: Socket) => async (data: Profile) => {
     try {
       const oppositeUser =
         room.user_id == data.user_id ? room.recipient_id : room.user_id;
-      console.log('\n\n---------> ', oppositeUser);
       const user = await sql.query(
         boilMSSQL(`SELECT * FROM %db.[Users] WHERE Id = ${oppositeUser};`),
       );
@@ -59,11 +56,9 @@ export default (socket: Socket) => async (data: Profile) => {
           } ORDER BY ID DESC;`,
         ),
       );
-      console.log('\n\n\n++++\n', lastMessage, '\n\n++++');
 
       if (user.recordset[0]) {
         const { IsOnline, lastSeen } = user.recordset[0];
-        console.log('\n\n====', IsOnline, lastSeen);
 
         if (lastMessage.recordset[0]) {
           room.last_message = lastMessage.recordset[0].text;
@@ -93,7 +88,6 @@ export default (socket: Socket) => async (data: Profile) => {
       result.push(room);
       counter -= 1;
       if (counter === 0) {
-        console.log('\n\n===\nResult: \n', result, '\n===\n');
         socketServer.to(socket.id).emit('user response', {
           type: 'list',
           rooms: result,
@@ -104,7 +98,6 @@ export default (socket: Socket) => async (data: Profile) => {
         type: 'error',
         message: 'Datebase error',
       });
-      console.log('==================', 'REQUEST PARAMS:', room);
       console.error(err);
     }
   });

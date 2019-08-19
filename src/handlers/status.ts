@@ -28,7 +28,6 @@ export default (socket: Socket, perm) => async (data: User) => {
           `UPDATE %db.[Users] SET IsOnline = 1 WHERE id = ${data.user_id};`,
         ),
       );
-      console.log('Status result: \n', result);
     } catch (error) {
       socket.emit('logs response', {
         error: {
@@ -47,7 +46,6 @@ export default (socket: Socket, perm) => async (data: User) => {
           )}' WHERE id = ${data.user_id};`,
         ),
       );
-      console.log('Status result: \n', result);
     } catch (error) {
       socket.emit('logs response', {
         error: {

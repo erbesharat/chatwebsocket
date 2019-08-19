@@ -9,7 +9,6 @@ app.get('/', function(req, res) {
 });
 
 function handleWebsocket(socket, permanentData, globalData) {
-  console.log(permanentData);
   console.log('Listeners', Object.keys(socketHandlers));
   Object.keys(socketHandlers).forEach(event => {
     socket.on(event, msg => {

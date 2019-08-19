@@ -20,7 +20,6 @@ export default (socket: Socket) => async (data: Profile) => {
     });
     console.error(error);
   }
-  console.log('\n\x1b[0m\x1b[47m\x1b[30mPROFILE\x1b[0m\t\t', user);
   socketServer.to(socket.id).emit('user response', {
     type: 'profile',
     user: user.recordset[0],
