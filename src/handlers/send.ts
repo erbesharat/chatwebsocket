@@ -117,5 +117,10 @@ export default (socket: Socket) => async (data: Message) => {
 
   // TODO: Get user data from permenanatData object and send response only to them
 
+  socketServer.to(data.room_title).emit('user response', {
+    type: 'status',
+    refresh: true,
+  });
+
   socketServer.emit('receive', data);
 };
