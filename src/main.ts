@@ -1,4 +1,4 @@
-import { app, socketServer, server, sql } from './server';
+import { app, socketServer, server, sslserver, sql } from './server';
 import socketHandlers from './handlers';
 import { GlobalData } from './types';
 
@@ -48,6 +48,9 @@ async function startServer() {
     });
     server.listen(process.env.PORT, function() {
       console.log(`listening on *:${process.env.PORT}`);
+    });
+    sslserver.listen(443, function() {
+      console.log(`secure listening on *: 443`);
     });
   } catch (err) {
     console.error(err);
