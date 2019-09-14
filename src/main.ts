@@ -49,9 +49,12 @@ async function startServer() {
     server.listen(process.env.PORT, function() {
       console.log(`listening on *:${process.env.PORT}`);
     });
-    sslserver.listen(443, function() {
-      console.log(`secure listening on *: 443`);
-    });
+    sslserver.listen(
+      process.env.SECURE_PORT != '' ? process.env.SECURE_PORT : 443,
+      function() {
+        console.log(`secure listening on *: ${process.env.SECURE_PORT}`);
+      },
+    );
   } catch (err) {
     console.error(err);
   }
